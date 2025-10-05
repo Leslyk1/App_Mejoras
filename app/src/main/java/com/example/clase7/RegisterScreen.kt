@@ -101,7 +101,7 @@ fun RegisterScreen(navController: NavController){
                 color = Color(0xFF0066B3)
             )
 
-            // Mensaje de estado
+
             if (message.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
@@ -168,10 +168,10 @@ fun RegisterScreen(navController: NavController){
 
             Button(
                 onClick = {
-                    // Resetear mensaje
+
                     message = ""
 
-                    // Validaciones básicas
+
                     if (statePassword != stateConfirmPassword) {
                         Toast.makeText(activity, context.getString(R.string.register_screen_password_error), Toast.LENGTH_SHORT).show()
                         return@Button
@@ -190,10 +190,10 @@ fun RegisterScreen(navController: NavController){
                     isLoading = true
                     message = "Validando permisos..."
 
-                    // Usar coroutines para la validación
+
                     scope.launch {
                         try {
-                            // PRIMERO: Validar si el usuario está en la lista permitida
+
                             val usuarioPermitido = validarUsuarioPermitido(stateEmail, db)
 
                             if (!usuarioPermitido) {
@@ -202,7 +202,7 @@ fun RegisterScreen(navController: NavController){
                                 return@launch
                             }
 
-                            // SEGUNDO: Si está permitido, crear el usuario
+
                             message = "Usuario autorizado. Creando cuenta..."
 
                             auth.createUserWithEmailAndPassword(stateEmail, statePassword)
@@ -212,7 +212,7 @@ fun RegisterScreen(navController: NavController){
                                         message = "Registro exitoso!"
                                         Toast.makeText(activity, context.getString(R.string.register_screen_success), Toast.LENGTH_SHORT).show()
 
-                                        // Navegar a otra pantalla después del registro exitoso
+
                                         navController.popBackStack()
                                     } else {
                                         message = "Error: ${task.exception?.message}"
@@ -251,19 +251,19 @@ fun RegisterScreen(navController: NavController){
     }
 }
 
-// FUNCIÓN NUEVA: Validar si el usuario está en la lista permitida
+
 private suspend fun validarUsuarioPermitido(email: String, db: FirebaseFirestore): Boolean {
     return try {
-        // Buscar en la colección 'usuarios_permitidos' donde el email coincida
+
         val query = db.collection("usuarios_permitidos")
             .whereEqualTo("email", email.toLowerCase())
             .get()
             .await()
 
-        // Si encontramos al menos un documento, el usuario está permitido
+
         !query.isEmpty && query.documents.isNotEmpty()
     } catch (e: Exception) {
-        // Si hay error, asumimos que no está permitido
+
         println("Error validando usuario: ${e.message}")
         false
     }

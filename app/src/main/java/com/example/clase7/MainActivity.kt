@@ -46,27 +46,19 @@ class MainActivity : ComponentActivity() {
 fun MainScreens() {
 
     val context = LocalContext.current
-
     val navController = rememberNavController()
 
-    var initialScreen: String = stringResource(R.string.screen_login)
 
-    val auth = Firebase.auth
-    val currentUser = auth.currentUser
-
-    if (currentUser != null){
-        initialScreen = stringResource(R.string.screen_log_success)
-    }
+    val initialScreen: String = stringResource(R.string.screen_login)
 
     NavHost(navController = navController, startDestination = initialScreen) {
         composable(context.getString(R.string.screen_login)) { LoginScreen(navController) }
         composable(context.getString(R.string.screen_register)) { RegisterScreen(navController) }
         composable(context.getString(R.string.screen_log_success)) { SuccessScreen(navController) }
-        composable(context.getString(R.string.screen_users)) {UserScreen(navController)}
-        composable(context.getString(R.string.screen_users_form)) {UsersFormScreen(navController)}
+        composable(context.getString(R.string.screen_users)) { UserScreen(navController) }
+        composable(context.getString(R.string.screen_users_form)) { UsersFormScreen(navController) }
         composable("informes_screen") {
             InformesScreen(navController = navController)
         }
     }
 }
-

@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
@@ -32,7 +33,6 @@ fun InformesScreen(navController: NavController) {
     val db = FirebaseFirestore.getInstance()
     val scope = rememberCoroutineScope()
     val activity = LocalView.current.context as Activity
-
 
     var curso by remember { mutableStateOf("") }
     var año by remember { mutableStateOf("") }
@@ -78,7 +78,6 @@ fun InformesScreen(navController: NavController) {
                 modifier = Modifier.padding(bottom = 20.dp)
             )
 
-
             if (message.isNotEmpty()) {
                 Text(
                     text = message,
@@ -91,68 +90,67 @@ fun InformesScreen(navController: NavController) {
                 )
             }
 
-            // Formulario
+
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Campo Curso
+
                 OutlinedTextField(
                     value = curso,
                     onValueChange = { curso = it },
                     label = { Text("Curso *") },
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Filled.Create,  // Ícono simple que existe
+                            imageVector = Icons.Filled.Create,
                             contentDescription = "Curso"
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("Ej: Matemáticas Básicas") }
+                    placeholder = { Text("Ej: Programación") }
                 )
 
-                // Campo Año
+
                 OutlinedTextField(
                     value = año,
                     onValueChange = { año = it },
                     label = { Text("Año *") },
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Filled.Create,  // Ícono simple que existe
+                            imageVector = Icons.Filled.Create,
                             contentDescription = "Año"
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    placeholder = { Text("Ej: 2024") }
+                    placeholder = { Text("Ej: 2025") }
                 )
 
-                // Campo Semestre
+
                 OutlinedTextField(
                     value = semestre,
                     onValueChange = { semestre = it },
                     label = { Text("Semestre *") },
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Filled.Create,  // Ícono simple que existe
+                            imageVector = Icons.Filled.Create,
                             contentDescription = "Semestre"
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    placeholder = { Text("Ej: 1 o 2") }
+                    placeholder = { Text("Ej: Segundo") }
                 )
 
-                // Campo Fecha
+
                 OutlinedTextField(
                     value = fecha,
                     onValueChange = { fecha = it },
                     label = { Text("Fecha") },
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Filled.Create,  // Ícono simple que existe
+                            imageVector = Icons.Filled.Create,
                             contentDescription = "Fecha"
                         )
                     },
@@ -160,25 +158,25 @@ fun InformesScreen(navController: NavController) {
                     placeholder = { Text("DD/MM/AAAA") }
                 )
 
-                // Campo Comentarios
+
                 OutlinedTextField(
                     value = comentarios,
                     onValueChange = { comentarios = it },
                     label = { Text("Comentarios") },
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Filled.Create,  // Ícono simple que existe
+                            imageVector = Icons.Filled.Create,
                             contentDescription = "Comentarios"
                         )
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(120.dp),
-                    placeholder = { Text("Comentarios adicionales...") },
+                    placeholder = { Text("Informe de la clase de programación...") },
                     singleLine = false
                 )
 
-                // Sección Archivos Adjuntos
+
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
@@ -202,7 +200,7 @@ fun InformesScreen(navController: NavController) {
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Icon(
-                                imageVector = Icons.Filled.Add,  // Ícono simple que existe
+                                imageVector = Icons.Filled.Add,
                                 contentDescription = "Adjuntar archivo"
                             )
                             Spacer(modifier = Modifier.width(8.dp))
@@ -219,12 +217,12 @@ fun InformesScreen(navController: NavController) {
                 }
             }
 
-            // Botón Guardar
+
             Button(
                 onClick = {
-                    // Validaciones
+
                     if (curso.isEmpty() || año.isEmpty() || semestre.isEmpty()) {
-                        message = "Error: Los campos con * son obligatorios"
+                        message = "Error: Los campos con  son obligatorios"
                         return@Button
                     }
 
@@ -245,7 +243,7 @@ fun InformesScreen(navController: NavController) {
                                     message = " Informe guardado exitosamente!"
                                     Toast.makeText(context, "Informe guardado", Toast.LENGTH_SHORT).show()
 
-                                    // Limpiar formulario después de guardar
+
                                     curso = ""
                                     año = ""
                                     semestre = ""
@@ -255,11 +253,13 @@ fun InformesScreen(navController: NavController) {
                                 onError = { error ->
                                     isLoading = false
                                     message = " Error: $error"
+                                    Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
                                 }
                             )
                         } catch (e: Exception) {
                             isLoading = false
                             message = " Error: ${e.message}"
+                            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                         }
                     }
                 },
@@ -284,7 +284,7 @@ fun InformesScreen(navController: NavController) {
     }
 }
 
-// Función para guardar el informe en Firestore
+
 private fun guardarInforme(
     curso: String,
     año: String,
@@ -295,15 +295,25 @@ private fun guardarInforme(
     onSuccess: () -> Unit,
     onError: (String) -> Unit
 ) {
+
+    val user = FirebaseAuth.getInstance().currentUser
+    if (user == null) {
+        onError("Debe iniciar sesión para guardar informes")
+        return
+    }
+
     val informeData = hashMapOf(
         "curso" to curso,
         "año" to año,
         "semestre" to semestre,
         "fecha" to fecha,
         "comentarios" to comentarios,
-        "archivos" to listOf<String>(), // Por ahora vacío
+        "archivos" to listOf<String>(),
         "fechaCreacion" to Timestamp.now(),
-        "estado" to "pendiente"
+        "estado" to "pendiente",
+
+        "usuarioId" to user.uid,
+        "usuarioEmail" to user.email
     )
 
     db.collection("informes")
@@ -312,6 +322,16 @@ private fun guardarInforme(
             onSuccess()
         }
         .addOnFailureListener { e ->
-            onError(e.message ?: "Error desconocido")
+
+            val errorMsg = when {
+                e.message?.contains("PERMISSION_DENIED") == true ->
+                    "ERROR DE PERMISOS: Cambia las reglas de Firestore para permitir escritura"
+                e.message?.contains("network") == true ->
+                    "ERROR DE RED: Verifica tu conexión a internet"
+                e.message?.contains("FirebaseApp") == true ->
+                    "ERROR DE CONFIGURACIÓN: Verifica la configuración de Firebase"
+                else -> "Error: ${e.message ?: "Error desconocido"}"
+            }
+            onError(errorMsg)
         }
 }

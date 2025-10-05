@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "708677742339",
-    "project_id": "clase7app",
-    "storage_bucket": "clase7app.firebasestorage.app"
+    "project_number": "360642648435",
+    "project_id": "clase-7-app-mejoras",
+    "storage_bucket": "clase-7-app-mejoras.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:708677742339:android:2aa6e4ca420878717b4336",
+        "mobilesdk_app_id": "1:360642648435:android:3d0e1dcbd66b8751720d06",
         "android_client_info": {
           "package_name": "com.example.clase7"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDk1b9zfMCXjnbjfT6hxJLv-pFALTC7YOE"
+          "current_key": "AIzaSyD8zAaFAWnKmE7bXtS0iHfexR0slduGHlk"
         }
       ],
       "services": {
